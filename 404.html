@@ -1,180 +1,312 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>书语 · 精华导读阅读</title>
+<meta name="theme-color" content="#FBFAF7">
+<title>书语 · 精华导读</title>
 <style>
+/* ================= 设计令牌 ================= */
 :root{
-  --bg:#f7f3ea; --card:#fffdf8; --ink:#2c2a26; --ink2:#6b675e; --ink3:#9a948a;
-  --accent:#8b5a2b; --accent2:#b07b3f; --line:#e8e0d0; --quote-bg:#f2ecdd;
-  --chip:#efe7d5; --ok:#4a7c59; --warn:#a35d2b;
+  --paper:#FBFAF7; --surface:#FFFFFF; --sunken:#F4F1E9;
+  --ink:#1B1A17; --ink2:#5A564E; --ink3:#8B8579;
+  --line:#E7E2D6; --line-soft:#F1EDE3;
+  --brand:#A6402C; --brand-soft:#F7EDE8; --brand-tint:rgba(166,64,44,.08);
+  --ok:#2C6650; --warn:#9A5A24;
+  --sheet-shadow:0 -12px 40px rgba(27,26,23,.14);
+  --serif:"Noto Serif SC","Source Han Serif SC","Songti SC","SimSun",serif;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  --fs:16.5px; --lh:1.92;
+}
+[data-theme="sepia"]{
+  --paper:#F6EFE1; --surface:#FBF6EA; --sunken:#EFE6D4;
+  --ink:#231F19; --ink2:#5C5346; --ink3:#8A7F6C;
+  --line:#E0D5BF; --line-soft:#EBE2D0;
+  --brand:#9C3D28; --brand-soft:#F3E5DB;
 }
 [data-theme="dark"]{
-  --bg:#17171a; --card:#202024; --ink:#e6e2d8; --ink2:#a8a49a; --ink3:#6e6a62;
-  --accent:#d0a05c; --accent2:#c08a4a; --line:#33333a; --quote-bg:#26262c;
-  --chip:#2c2c33; --ok:#7db894; --warn:#d0a05c;
+  --paper:#131311; --surface:#1B1A18; --sunken:#201F1B;
+  --ink:#E9E4D8; --ink2:#A9A39A; --ink3:#7C776E;
+  --line:#2C2A26; --line-soft:#232220;
+  --brand:#D9705A; --brand-soft:#2A1F1B; --brand-tint:rgba(217,112,90,.12);
+  --ok:#7FB39B; --warn:#D09A5C;
+  --sheet-shadow:0 -12px 40px rgba(0,0,0,.55);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
 body{
-  font-family:"Noto Serif SC","Source Han Serif SC","STSong",serif;
-  background:var(--bg); color:var(--ink); line-height:1.9;
-  transition:background .3s,color .3s; min-height:100vh;
+  background:var(--paper);color:var(--ink);font-family:var(--serif);
+  line-height:var(--lh);min-height:100vh;transition:background .3s,color .3s;
+  -webkit-font-smoothing:antialiased;
 }
-.wrap{max-width:640px;margin:0 auto;padding:0 18px 90px}
-header{
-  position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);
-  backdrop-filter:blur(12px);border-bottom:1px solid var(--line);
-}
-.hd{max-width:640px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:10px}
-.hd h1{font-size:17px;font-weight:700;letter-spacing:1px;flex:1}
-.hd .logo{font-size:20px}
-.icon-btn{border:1px solid var(--line);background:var(--card);color:var(--ink2);
-  width:36px;height:36px;border-radius:10px;font-size:16px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0}
+::selection{background:var(--brand-tint)}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:4px}
 
-/* 书架 */
-.shelf-title{padding:26px 4px 14px;font-size:13px;letter-spacing:2px;color:var(--accent);font-weight:700}
-.shelf-empty{text-align:center;padding:80px 20px;color:var(--ink3);font-size:14px}
-.shelf-empty .big{font-size:40px;margin-bottom:10px}
-.book-card{
-  display:flex;gap:14px;align-items:center;background:var(--card);
-  border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:12px;
-  cursor:pointer;transition:transform .15s;
+/* ================= 顶部 ================= */
+.rbar{
+  position:sticky;top:0;z-index:40;display:grid;grid-template-columns:44px 1fr 44px;
+  align-items:center;height:48px;padding:0 8px;
+  background:color-mix(in srgb,var(--paper) 86%,transparent);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
 }
-.book-card:active{transform:scale(.98)}
-.book-card .cover{
-  width:52px;height:70px;border-radius:6px;flex-shrink:0;
-  background:linear-gradient(160deg,var(--accent),var(--accent2));
-  color:#fff;display:flex;align-items:center;justify-content:center;
-  font-size:11px;line-height:1.4;text-align:center;padding:4px;overflow:hidden;
-  font-family:inherit;
+.rbar .ico{width:44px;height:44px;display:grid;place-items:center;border:0;background:none;
+  color:var(--ink2);border-radius:50%;transition:.18s}
+.rbar .ico:active{background:var(--sunken)}
+.rbar .chap{text-align:center;font-family:var(--sans);font-size:11.5px;letter-spacing:.06em;
+  color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.92}
+.rbar .brandmark{font-family:var(--serif);font-size:16px;font-weight:600;letter-spacing:.14em;
+  text-align:center;color:var(--ink)}
+.pbar{position:sticky;top:48px;z-index:40;height:1.5px;background:var(--line-soft)}
+.pbar i{display:block;height:100%;width:0;background:var(--brand);transition:width .12s linear}
+
+@media(min-width:760px){
+  body{background:var(--paper)}
 }
-.book-card .info{flex:1;min-width:0}
-.book-card .bt{font-size:16px;font-weight:700;margin-bottom:3px;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.5}
-.book-card .bd{font-size:12px;color:var(--ink2);
+
+/* ================= 书架 ================= */
+.shelf{max-width:640px;margin:0 auto;padding:22px 22px 96px}
+.masthead{display:flex;align-items:flex-start;justify-content:space-between;padding:14px 0 30px}
+.masthead .brand{font-size:28px;font-weight:600;letter-spacing:.16em;line-height:1.2}
+.masthead .tagline{font-family:var(--sans);font-size:11.5px;letter-spacing:.1em;color:var(--ink3);margin-top:9px}
+.masthead .count{font-size:11.5px;color:var(--ink3);text-align:right;line-height:1.7;font-family:var(--sans)}
+
+.continue{display:flex;align-items:center;gap:14px;padding:15px 16px;border-radius:12px;
+  background:var(--sunken);margin-bottom:34px;cursor:pointer;border:1px solid transparent;transition:.2s}
+.continue:active{border-color:var(--line)}
+.continue .ring{width:36px;height:36px;flex:0 0 36px;border-radius:50%;position:relative;
+  background:conic-gradient(var(--brand) var(--p,0%),var(--line) 0);
+  display:grid;place-items:center}
+.continue .ring::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--sunken)}
+.continue .ring span{position:relative;font-family:var(--sans);font-size:9px;font-weight:600;color:var(--brand)}
+.continue .tx{flex:1;min-width:0}
+.continue .tx b{display:block;font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.continue .tx span{font-family:var(--sans);font-size:11px;color:var(--ink3)}
+.continue .arw{color:var(--ink3);font-size:15px;font-family:var(--sans)}
+
+.shelf-sec{display:flex;align-items:baseline;gap:10px;font-family:var(--sans);font-size:11px;
+  letter-spacing:.16em;color:var(--ink3);padding-bottom:2px}
+.shelf-sec::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+
+.book{display:grid;grid-template-columns:3px 1fr;gap:16px;padding:22px 0;
+  border-bottom:1px solid var(--line-soft);cursor:pointer}
+.book:active .body h4{color:var(--brand)}
+.book .spine{border-radius:2px;align-self:stretch;min-height:44px}
+.book h4{font-size:19px;font-weight:600;line-height:1.5;letter-spacing:.01em;margin-bottom:7px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;transition:color .18s}
+.book p{font-size:13.5px;line-height:1.78;color:var(--ink2);
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.book-card .meta{font-size:11px;color:var(--ink3);margin-top:5px;display:flex;gap:8px;flex-wrap:wrap}
-.badge{background:var(--chip);color:var(--accent);font-size:10.5px;padding:2px 8px;border-radius:10px}
+.book .meta{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:11px;
+  font-family:var(--sans);font-size:11px;color:var(--ink3);letter-spacing:.03em}
+.book .meta i{width:2px;height:2px;border-radius:50%;background:var(--ink3);opacity:.55}
+.book .meta .tag{color:var(--brand)}
 
-/* 阅读页 */
-.reader-card{background:var(--card);border:1px solid var(--line);border-radius:16px;
-  padding:26px 22px;margin-bottom:18px;box-shadow:0 2px 12px rgba(0,0,0,.04)}
-.book-head{text-align:center;padding:34px 16px 26px}
-.book-head .tag{display:inline-block;background:var(--chip);color:var(--accent);
-  font-size:11.5px;padding:3px 12px;border-radius:20px;letter-spacing:1px;margin-bottom:14px}
-.book-head h2{font-size:24px;line-height:1.5;margin-bottom:10px;letter-spacing:1px}
-.book-head .meta{font-size:12.5px;color:var(--ink3)}
-.sec{margin-top:30px}
-.sec-title{font-size:13px;color:var(--accent);letter-spacing:2px;font-weight:700;
-  display:flex;align-items:center;gap:8px;margin-bottom:14px}
-.sec-title::after{content:"";flex:1;height:1px;background:var(--line)}
-.sec p{font-size:var(--fs,16px);color:var(--ink);margin-bottom:10px;text-align:justify}
-.skeleton-list{list-style:none}
-.skeleton-list li{font-size:var(--fs,16px);margin:10px 0;padding-left:20px;position:relative;text-align:justify}
-.skeleton-list li::before{content:"·";position:absolute;left:4px;color:var(--accent2);font-weight:700}
-.quote{background:var(--quote-bg);border-left:3px solid var(--accent2);
-  border-radius:0 12px 12px 0;padding:16px 16px 12px;margin:16px 0}
-.quote .q-text{font-size:var(--fs,16px);color:var(--ink);text-align:justify}
-.quote .q-src{font-size:11.5px;color:var(--ink3);margin-top:10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.dual{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.dual>div{background:var(--quote-bg);border-radius:12px;padding:12px 14px;font-size:13px}
-.dual .h{font-size:11.5px;letter-spacing:1px;margin-bottom:4px;font-weight:700}
-.dual .fit .h{color:var(--ok)} .dual .unfit .h{color:var(--warn)}
-.takeaway{background:var(--quote-bg);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:10px}
-.takeaway .h{font-size:12px;letter-spacing:2px;color:var(--accent);margin-bottom:8px;font-weight:700}
-.takeaway p{font-size:var(--fs,16px)}
-.pitfall{list-style:none}
-.pitfall li{font-size:var(--fs,16px);margin:10px 0;padding-left:22px;position:relative;text-align:justify}
-.pitfall li::before{content:"⚠";position:absolute;left:0;font-size:13px;top:3px}
-.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--accent);font-size:13px;
-  padding:14px 0 4px;cursor:pointer;text-decoration:none}
-.loading{text-align:center;padding:100px 20px;color:var(--ink3);font-size:14px}
+.state{text-align:center;padding:60px 24px;color:var(--ink3)}
+.state .big{font-size:15px;margin-bottom:8px;color:var(--ink2)}
+.state .sm{font-family:var(--sans);font-size:12px;line-height:1.8}
+.skel-card{padding:22px 0;border-bottom:1px solid var(--line-soft)}
+.skel-line{height:14px;border-radius:3px;background:var(--line-soft);margin-bottom:10px;
+  animation:pulse 1.4s ease-in-out infinite}
+.skel-line.w60{width:60%}.skel-line.w90{width:90%}.skel-line.w40{width:40%}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
 
-/* 范围声明 */
-.scope-note{background:var(--quote-bg);border:1px dashed var(--line);border-radius:12px;
-  padding:12px 14px;font-size:12.5px;color:var(--ink2);line-height:1.75;margin-top:6px}
-.scope-note b{color:var(--accent);letter-spacing:1px}
+/* ================= 阅读页 ================= */
+.reader{max-width:640px;margin:0 auto;padding:0 0 120px}
+.r-head{padding:24px 24px 0}
+.r-head .kicker{font-family:var(--sans);font-size:10.5px;letter-spacing:.16em;color:var(--brand);
+  font-weight:600;margin-bottom:13px}
+.r-head h1{font-size:25px;font-weight:600;line-height:1.48;letter-spacing:.01em}
+.r-head .sub{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:13px;
+  font-family:var(--sans);font-size:11px;color:var(--ink3);letter-spacing:.04em}
+.r-head .sub i{width:2px;height:2px;border-radius:50%;background:var(--ink3);opacity:.6}
+.r-head .oneliner{font-size:15px;line-height:1.95;color:var(--ink2);margin-top:20px;
+  padding-left:15px;border-left:2px solid var(--brand)}
+.r-head .scope{font-family:var(--sans);font-size:11.5px;line-height:1.8;color:var(--ink3);
+  margin-top:18px;padding-top:14px;border-top:1px dotted var(--line)}
+.r-head .scope b{color:var(--brand);letter-spacing:.08em;margin-right:6px;font-weight:600}
 
-/* 核心知识条目 */
-.ck{margin:0 0 18px}
-.ck-lead{font-size:calc(var(--fs,16px) - 1px);font-weight:700;color:var(--accent);
-  margin-bottom:6px;letter-spacing:.5px}
-.ck-body{font-size:var(--fs,16px);color:var(--ink);text-align:justify;white-space:pre-wrap}
-.tldr{background:var(--quote-bg);border-radius:12px;padding:14px 16px;margin-top:16px;
-  font-size:calc(var(--fs,16px) - 1px);color:var(--ink);line-height:1.85}
-.tldr b{color:var(--accent2)}
+.sec-h{margin:38px 24px 18px;display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:baseline}
+.sec-h .no{font-family:var(--sans);font-size:10.5px;letter-spacing:.1em;color:var(--brand);
+  font-weight:600;padding-top:5px;font-feature-settings:"tnum"}
+.sec-h h2{font-size:18px;font-weight:600;letter-spacing:.02em;padding-bottom:10px;
+  border-bottom:1px solid var(--line)}
+.blk{padding:0 24px}
+.blk p{font-size:var(--fs);line-height:var(--lh);color:var(--ink)}
+.blk p+p{margin-top:14px}
+
+/* 知识条目 */
+.insight{display:grid;grid-template-columns:22px 1fr;gap:0 8px;margin-bottom:26px}
+.insight .dot{font-family:var(--sans);font-size:11px;font-weight:600;color:var(--brand);
+  padding-top:5px;font-feature-settings:"tnum"}
+.insight .lead{font-size:calc(var(--fs) + .5px);font-weight:600;line-height:1.7;margin-bottom:6px;letter-spacing:.01em}
+.insight .txt{font-size:calc(var(--fs) - 1px);line-height:var(--lh);color:var(--ink2);white-space:pre-wrap}
+.tldr{margin:6px 0 0 30px;padding:14px 16px;background:var(--sunken);border-radius:6px;
+  font-size:calc(var(--fs) - 1.5px);line-height:1.88;color:var(--ink)}
+.tldr b{font-family:var(--sans);font-size:10.5px;letter-spacing:.14em;color:var(--brand);
+  display:block;margin-bottom:6px}
 
 /* 摘录 */
-.quote .q-no{font-size:11px;color:var(--accent);letter-spacing:1.5px;font-weight:700;margin-bottom:8px}
-.quote .q-note{font-size:calc(var(--fs,16px) - 2px);color:var(--ink2);margin-top:12px;
-  padding-top:10px;border-top:1px dashed var(--line);font-style:italic;line-height:1.8}
-.quote .q-text{white-space:pre-wrap}
+.quote{margin:0 24px 26px;padding-left:20px;border-left:2px solid var(--brand)}
+.quote .mark{display:block;height:22px;font-size:48px;line-height:.62;color:var(--brand);opacity:.24}
+.quote .qt{font-size:calc(var(--fs) + .5px);line-height:1.95;margin-top:8px;white-space:pre-wrap}
+.quote .qs{display:flex;align-items:center;gap:7px;margin-top:14px;
+  font-family:var(--sans);font-size:10.5px;letter-spacing:.08em;color:var(--ink3)}
+.quote .qs .rule{width:14px;height:1px;background:var(--ink3);opacity:.5}
+.quote .qn{font-size:calc(var(--fs) - 2.5px);font-style:italic;line-height:1.85;color:var(--ink2);
+  margin-top:10px;padding-top:10px;border-top:1px dotted var(--line)}
 
 /* 辨析 */
-.think-block{margin-bottom:16px}
-.think-block .h{font-size:12px;letter-spacing:1.5px;font-weight:700;color:var(--accent);margin-bottom:6px}
-.think-block.doubt .h{color:var(--warn)}
-.think-block p{font-size:var(--fs,16px);text-align:justify}
-.think-list{list-style:none}
-.think-list li{font-size:calc(var(--fs,16px) - 1px);margin:8px 0;padding-left:20px;
-  position:relative;text-align:justify;color:var(--ink)}
-.think-list li::before{content:"？";position:absolute;left:0;color:var(--warn);font-weight:700;font-size:12px}
+.verdict{display:flex;flex-direction:column;gap:20px}
+.vd .lab{display:flex;align-items:center;gap:7px;font-family:var(--sans);font-size:10.5px;
+  letter-spacing:.12em;font-weight:600;margin-bottom:7px}
+.vd .lab i{width:5px;height:5px;border-radius:1px;flex:0 0 5px}
+.vd p,.vd li{font-size:calc(var(--fs) - 1.5px);line-height:var(--lh);color:var(--ink2)}
+.vd ul{list-style:none}
+.vd li{position:relative;padding-left:13px;margin-bottom:8px}
+.vd li::before{content:"";position:absolute;left:0;top:.72em;width:4px;height:1px;background:var(--warn);opacity:.7}
+.vd.ok .lab{color:var(--ok)}.vd.ok .lab i{background:var(--ok)}
+.vd.doubt .lab{color:var(--warn)}.vd.doubt .lab i{background:var(--warn)}
+.vd.how .lab{color:var(--brand)}.vd.how .lab i{background:var(--brand)}
 
-/* 待补占位 */
-.todo-note{background:var(--quote-bg);border-radius:10px;padding:14px 16px;
-  font-size:13px;color:var(--ink2);line-height:1.8}
-.todo-note b{color:var(--warn)}
+/* 适合谁 */
+.fitgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:400px){.fitgrid{grid-template-columns:1fr;gap:20px}}
+.fitcol{padding-left:13px;border-left:2px solid var(--line)}
+.fitcol.yes{border-color:var(--ok)}
+.fitcol.no{border-color:var(--warn)}
+.fitcol .h{font-family:var(--sans);font-size:10.5px;letter-spacing:.12em;font-weight:600;margin-bottom:7px}
+.fitcol.yes .h{color:var(--ok)}.fitcol.no .h{color:var(--warn)}
+.fitcol li{list-style:none;font-size:calc(var(--fs) - 2px);line-height:1.85;color:var(--ink2);margin-bottom:6px}
 
-/* 结构骨架（有序） */
-.skel{margin:0 0 0 22px}
-.skel li{font-size:var(--fs,16px);margin:12px 0;padding-left:2px;text-align:justify}
-.skel li::marker{color:var(--accent2);font-weight:700}
+/* 带走什么 */
+.takeaway{margin:0 24px;padding:22px 20px;background:var(--sunken);border-radius:12px}
+.takeaway .h{font-family:var(--sans);font-size:10.5px;letter-spacing:.14em;color:var(--brand);
+  font-weight:600;margin-bottom:10px}
+.takeaway p{font-size:var(--fs);line-height:var(--lh)}
 
-/* 工具条 */
-.toolbar{position:fixed;bottom:0;left:0;right:0;z-index:60;
-  background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(14px);
-  border-top:1px solid var(--line)}
-.tb{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:8px;
-  padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
-.tb .spacer{flex:1}
-.tb button{border:1px solid var(--line);background:var(--card);color:var(--ink2);
-  padding:9px 16px;border-radius:20px;font-size:13px;cursor:pointer;font-family:inherit}
-.tb button:active{transform:scale(.95)}
-#fs-val{font-size:11px;color:var(--ink3);min-width:34px;text-align:center}
-.progress-bar{position:fixed;top:0;left:0;height:2.5px;background:var(--accent);z-index:100;width:0;transition:width .1s}
-#toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%) translateY(20px);
-  background:var(--ink);color:var(--bg);padding:10px 20px;border-radius:24px;
-  font-size:13px;opacity:0;pointer-events:none;transition:all .3s;z-index:200;max-width:80vw}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* 避坑 */
+.pitfalls{list-style:none}
+.pitfalls li{position:relative;padding-left:20px;font-size:calc(var(--fs) - 1px);line-height:var(--lh);
+  color:var(--ink2);margin-bottom:14px}
+.pitfalls li::before{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;
+  border:1.5px solid var(--warn);border-radius:1px;transform:rotate(45deg)}
+
+.r-end{margin:40px 24px 0;padding-top:20px;border-top:1px solid var(--line);display:flex;
+  justify-content:space-between;font-family:var(--sans);font-size:10.5px;color:var(--ink3);letter-spacing:.06em}
+
+.todo-note{margin:0 24px;padding:14px 16px;background:var(--sunken);border-radius:8px;
+  font-family:var(--sans);font-size:12px;line-height:1.8;color:var(--ink2)}
+.todo-note b{color:var(--warn);font-weight:600}
+
+/* ================= 悬浮 / 抽屉 ================= */
+.fab{position:fixed;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:30}
+.fab button{width:46px;height:46px;border-radius:50%;border:1px solid var(--line);
+  background:var(--surface);color:var(--ink2);font-size:15px;font-weight:600;
+  box-shadow:0 6px 20px -8px rgba(27,26,23,.3);display:grid;place-items:center;
+  transition:transform .18s,background .18s}
+.fab button:active{transform:scale(.94)}
+
+.scrim{position:fixed;inset:0;background:rgba(20,19,16,.34);z-index:50;opacity:0;
+  pointer-events:none;transition:opacity .26s;backdrop-filter:blur(1px)}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--surface);
+  border-radius:22px 22px 0 0;box-shadow:var(--sheet-shadow);border-top:1px solid var(--line);
+  padding:10px 22px calc(22px + env(safe-area-inset-bottom));
+  transform:translateY(105%);transition:transform .3s cubic-bezier(.2,.8,.2,1);
+  max-height:78vh;overflow-y:auto;max-width:640px;margin:0 auto}
+.sheet.on{transform:translateY(0)}
+.sheet .grab{width:38px;height:4px;border-radius:9px;background:var(--ink3);opacity:.26;margin:0 auto 18px}
+.sheet h4{font-size:15px;font-weight:600;letter-spacing:.02em;margin-bottom:14px;display:flex;
+  justify-content:space-between;align-items:baseline}
+.sheet h4 span{font-family:var(--sans);font-size:11px;color:var(--ink3);font-weight:400;letter-spacing:.04em}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;
+  border-top:1px solid var(--line-soft)}
+.row .k{font-family:var(--sans);font-size:12.5px;color:var(--ink2)}
+.stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.stepper button{width:40px;height:34px;border:0;background:none;color:var(--ink2);font-size:14px}
+.stepper button:active{background:var(--sunken)}
+.stepper span{min-width:46px;text-align:center;font-family:var(--sans);font-size:12px;
+  color:var(--ink);font-feature-settings:"tnum"}
+.seg{display:flex;border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px}
+.seg b{font-family:var(--sans);font-size:11.5px;font-weight:500;color:var(--ink3);
+  padding:6px 12px;border-radius:999px;cursor:pointer;transition:.18s}
+.seg b.on{background:var(--ink);color:var(--paper)}
+.acts{display:flex;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid var(--line-soft)}
+.acts button{flex:1;height:42px;border-radius:999px;border:1px solid var(--line);background:none;
+  color:var(--ink2);font-family:var(--sans);font-size:12.5px}
+.acts button.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+.toc{list-style:none;padding-top:2px}
+.toc li{display:grid;grid-template-columns:26px 1fr auto;gap:10px;align-items:baseline;
+  padding:12px 0;border-top:1px solid var(--line-soft);cursor:pointer}
+.toc .n{font-family:var(--sans);font-size:10.5px;color:var(--ink3);font-feature-settings:"tnum"}
+.toc .t{font-size:14.5px}
+.toc .pg{font-family:var(--sans);font-size:10.5px;color:var(--ink3)}
+.toc li.on .t{color:var(--brand);font-weight:600}
+.toc li.on .n{color:var(--brand)}
+
+#toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%) translateY(14px);
+  background:var(--ink);color:var(--paper);padding:10px 20px;border-radius:999px;
+  font-family:var(--sans);font-size:12.5px;opacity:0;pointer-events:none;transition:.28s;z-index:80;
+  max-width:80vw;text-align:center}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
-<div class="progress-bar" id="pbar"></div>
-<header>
-  <div class="hd">
-    <span class="logo">📖</span>
-    <h1>书语 · 精华导读</h1>
-    <button class="icon-btn" id="btn-theme">🌙</button>
-  </div>
+
+<header class="rbar" id="rbar">
+  <button class="ico" id="btn-back" aria-label="返回书架">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <div class="chap" id="chapName"><span class="brandmark">书语</span></div>
+  <button class="ico" id="btn-toc" aria-label="目录" style="display:none">
+    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+  </button>
 </header>
+<div class="pbar"><i id="pbar"></i></div>
 
-<main class="wrap" id="app"></main>
+<main id="app"></main>
 
-<div class="toolbar" id="toolbar" style="display:none">
-  <div class="tb">
-    <button id="btn-back">← 书架</button>
-    <div class="spacer"></div>
-    <button id="btn-fs">A−</button>
-    <span id="fs-val">16px</span>
-    <button id="btn-fs2">A+</button>
-    <button id="btn-md">⬇️ 导出</button>
-  </div>
+<div class="fab" id="fab" style="display:none">
+  <button id="btn-set" aria-label="阅读设置" style="font-family:var(--serif)">Aa</button>
 </div>
+
+<div class="scrim" id="scrim"></div>
+
+<!-- 设置抽屉 -->
+<section class="sheet" id="sheetSet" aria-label="阅读设置">
+  <div class="grab"></div>
+  <h4>阅读设置 <span id="setHint">长按可选段</span></h4>
+  <div class="row">
+    <span class="k">字号</span>
+    <div class="stepper"><button id="fsDown" aria-label="减小字号">A−</button><span id="fsVal">16.5</span><button id="fsUp" aria-label="增大字号">A+</button></div>
+  </div>
+  <div class="row">
+    <span class="k">行距</span>
+    <div class="seg" id="segLh"><b data-lh="1.78">紧</b><b data-lh="1.92">标准</b><b data-lh="2.08">松</b></div>
+  </div>
+  <div class="row">
+    <span class="k">主题</span>
+    <div class="seg" id="segTheme"><b data-theme="light">纸白</b><b data-theme="sepia">暖黄</b><b data-theme="dark">深色</b></div>
+  </div>
+  <div class="acts">
+    <button id="btn-md">复制 Markdown</button>
+    <button id="btn-dl" class="primary">导出文件</button>
+  </div>
+</section>
+
+<!-- 目录抽屉 -->
+<section class="sheet" id="sheetToc" aria-label="目录">
+  <div class="grab"></div>
+  <h4>目录 <span id="tocHint"></span></h4>
+  <ul class="toc" id="tocList"></ul>
+</section>
+
 <div id="toast"></div>
 
-<script>window.__SY_STATIC__={"generatedAt":1793606945633,"list":[{"id":"dg_6","bookId":"bk_1","version":6,"engine":"import","publishedAt":1793603902851,"title":"我就是你啊：走进他人内心的7项修炼","totalChars":102933,"chaptersCount":58,"oneLiner":"一本用\"蓝王国/红王国\"寓言讲沟通的方法论书，约 10 万字。故事好读，方法硬核——读完这篇导读约需 8 分钟，能带走一整套可上手的冲突化解术。","tag":"精华导读"}],"details":{"dg_6":{"digest":{"schemaVersion":2,"tag":"精华导读","scope":"本导读的核心知识与原文摘录，仅基于实际细读的序言、第一关三种控情绪法、后记\"记忆锦囊\"（约 2 万字）；第二~七关仅据目录概述，未引原文。","oneLiner":"一本用\"蓝王国/红王国\"寓言讲沟通的方法论书，约 10 万字。故事好读，方法硬核——读完这篇导读约需 8 分钟，能带走一整套可上手的冲突化解术。","skeleton":["蓝红两国因一条新航线爆发冲突，蓝国王子奥姆奉命化解危机，却屡战屡败。","智者指点他踏上修行之路：七关修炼，每关学会一种\"走进他人内心\"的能力。","全书方法最后浓缩在后记\"记忆锦囊\"里——一套化解纷争的 6 步法（见下文核心知识）。","第一关是全部的根基：控制自己的情绪。学不会这关，后面六关全部免谈。"],"core":{"items":[{"lead":"① 三重山模型","body":"人与人的冲突，源于从\"我\"到\"你\"之间隔着三重大山——偏见、情绪、行为。想走进对方内心，得逐山翻越：先放下\"他就是针对我\"的偏见，再平息双方情绪，最后才谈得上改变行为互动。"},{"lead":"② 自他交换","body":"本书相比\"非暴力沟通\"更进一层的主张——不仅是一种沟通话术，更是一种内在视角：像看待自己一样看待对方，从超越偏见和情绪的高度，洞察对方行为背后的真实需求。"},{"lead":"③ 化解纷争 6 步法","body":"前提：全程避免解释、威胁、人身攻击——\"武力对抗\"只会适得其反。\n1. 平复自己的情绪：抑制攻击冲动（最难也最重要，只需几秒）\n2. 平复他人的情绪：对方炸毛时\"几乎什么也不要做\"，只回\"同意/好的/是的\"\n3. 理解他人，而非让他人被理解：问\"你为什么不同意？\"，倾听找共识\n4. 复述对方的话：\"我说得对吗？\"——让对方知道被理解，他才会闭嘴听你说\n5. 用并列词汇提自己的观点：\"就我而言/与此同时\"，不说\"没错，但是……\"\n6. 提出双赢方案：找不到就问对方；再不行就折中；连折中没有，至少留住关系"}],"tlDr":"前两步管情绪（自己的和对方的），中间两步管理解（先听懂、再证明你听懂了），最后两步管解决（并肩提观点、一起找方案）。顺序不能乱——90% 的冲突升级，都死在前两步。"},"quotes":[{"text":"在人类的认知天性中，从'我'到'你'，间隔着三重大山：偏见、情绪和行为。","src":"序言","note":"全书的理论地基，一句话。冲突的本质不是利益之争，而是三重认知屏障。"},{"text":"相比大家所熟知的'非暴力沟通'，本书更进一层，提出'自他交换'的概念。'自他交换'不仅是一种沟通方法，更是一种高维度的内在视角。","src":"序言","note":"帮你快速定位本书在沟通书谱系里的坐标——它是《非暴力沟通》的进阶版，主打视角切换而非话术。"},{"text":"情绪并不取决于您正在经历什么，而取决于您觉得自己经历了什么。","src":"第一关·方法一，全书最核心的一句","note":"情绪控制的总开关。让你生气的从来不是事件本身，而是你对事件的解读——这句话背后有一整个认知心理学的传统。"},{"text":"就像您可以用锤子钉钉子，也可以用它锤别人的脑袋。锤子还是那个锤子，用法却不同了。","src":"第一关·方法一，智者论情绪","note":"妙在反常识——情绪没有好坏，恐惧和愤怒是警示你的能量（故事里正是恐慌救了奥姆的命），要\"先听听再判断\"，而不是消除它。"},{"text":"当别人不同意我们的看法时，我们就会认为他想跟我们对着干……但其实（他是为自己考虑）。当有人威胁我们时，我们会认为他想让我们害怕，但其实，（是威胁者自己在害怕）。如果别人批评或者侮辱我们，我们会觉得他打算伤害我们……（其实他自己正在痛苦当中）。当别人表现出轻蔑时，我们总认为这代表他看不起我们……（其实他真正看不起的是自己）。","src":"第一关·方法一，引向冲突的四个误判","note":"方法一\"纠误判\"的具体清单，可直接对着用——下次被激怒时，逐条检查自己犯了哪个。"},{"text":"世上并没有坏人，只有受苦的人罢了。","src":"第一关·方法一，奥姆转述奶奶的话","note":"全书最柔软的一句，也是\"自他交换\"的民间版表达。攻击性强的人，多半自己正在痛。"},{"text":"尤其不要和对方说'你冷静点儿！'或者'你生气是没有用的！'……你可以用'同意''好的''是的''没错'等来回复对方……对方的情绪起初会有些波动，但随后便会逐渐稳定，直到最后慢慢平复。","src":"后记·记忆锦囊，第 2 步——全书最反直觉的招","note":"与直觉完全相反——对方发火时，一句\"你冷静点\"是火上浇油，而\"你说得对\"反而能让对方几秒内熄火。这是全书实操价值最高的一招。"},{"text":"之后问对方'我说得对吗？'。这样你会收获意想不到的神奇效果——对方会眉头上扬，露出满意的笑容，大赞一声'对啊！'。而后他便会闭上嘴，听你说话。","src":"后记·记忆锦囊，第 4 步复述","note":"复述的双重作用写得极诚实——既检验你是否真懂，又给足对方\"被理解\"的体验。人只有感到被理解后，才愿意听你说。"}],"thoughts":{"holds":"6 步法顺序设计有坚实的心理学逻辑——情绪不解决，讲道理无效；不理解对方，方案谈不拢。第 2 步的\"同意\"策略与认知失调理论暗合：对方攻击得不到对抗性回应，情绪自然回落。","doubts":["① \"同意/好的\"在权力严重不对等或对方恶意利用时，可能被解读为软弱退让，反而助长侵犯；","② 长期关系中若总是一方在\"自他交换\"，会造成单向透支——书里没细讲\"对方永远不肯翻山过来怎么办\"（此点基于细读范围的判断，后续章节可能有涉及）；","③ \"纠误判\"在盛怒当下最难执行——恰好最需要它的时刻，最用不出来。"],"howto":"不必七关全学。先只练两招——第 2 步的\"好的/同意\"（成本最低、见效最快）和摘录 5 的四误判清单（被激怒时逐条自查）。这两招练成习惯后，再回头看后面的关。","notes":[]},"fit":["经常陷于人际冲突（职场、家庭、客户）的人；读过《非暴力沟通》想进阶的人；喜欢寓言体、读不进理论书的人。"],"unfit":["想要学术论证与实证数据的人（本书是经验方法，不提供研究引用）；期待\"话术模板库\"的人（它给的是内在视角，不是台词）。"],"takeaway":"一套 6 步冲突化解流程 + 一个情绪自查清单 + 一句可贴在工位的反直觉口诀：对方炸毛时，别说\"你冷静点\"，说\"你说得对\"。 至少能改变一个行为：下次冲突升级前，先走第 1、2 步，再开口讲道理。","pitfalls":["别把\"自他交换\"理解成无原则退让——书的前提是对方也在这段关系里，恶意博弈场景需另行判断。","6 步法看着简单，第 1 步（平复自己）才是真功夫，跳过它直接背话术会显得虚伪，效果归零。","本书是寓言体，情节是方法的外壳；只看故事不读\"记忆锦囊\"，等于白读。"]},"book":{"title":"我就是你啊：走进他人内心的7项修炼","totalChars":102933,"chaptersCount":58,"sourceFile":"WoJiuShiNiA_ZouJinTaRen.epub"},"meta":{"version":6,"engine":"import","publishedAt":1793603902851}}},"markdown":{"dg_6":"# 《我就是你啊：走进他人内心的7项修炼》精华导读\n\n> **范围声明**：本导读的核心知识与原文摘录，仅基于实际细读的序言、第一关三种控情绪法、后记\"记忆锦囊\"（约 2 万字）；第二~七关仅据目录概述，未引原文。\n\n---\n\n## 一句话定位\n\n一本用\"蓝王国/红王国\"寓言讲沟通的方法论书，约 10 万字。故事好读，方法硬核——读完这篇导读约需 8 分钟，能带走一整套可上手的冲突化解术。\n\n## 这本书讲什么（结构骨架）\n\n1. 蓝红两国因一条新航线爆发冲突，蓝国王子奥姆奉命化解危机，却屡战屡败。\n2. 智者指点他踏上修行之路：七关修炼，每关学会一种\"走进他人内心\"的能力。\n3. 全书方法最后浓缩在后记\"记忆锦囊\"里——一套化解纷争的 6 步法（见下文核心知识）。\n4. 第一关是全部的根基：控制自己的情绪。学不会这关，后面六关全部免谈。\n\n## 核心知识（作者的精华）\n\n**① 三重山模型**：人与人的冲突，源于从\"我\"到\"你\"之间隔着三重大山——偏见、情绪、行为。想走进对方内心，得逐山翻越：先放下\"他就是针对我\"的偏见，再平息双方情绪，最后才谈得上改变行为互动。\n\n**② 自他交换**：本书相比\"非暴力沟通\"更进一层的主张——不仅是一种沟通话术，更是一种内在视角：像看待自己一样看待对方，从超越偏见和情绪的高度，洞察对方行为背后的真实需求。\n\n**③ 化解纷争 6 步法**：前提：全程避免解释、威胁、人身攻击——\"武力对抗\"只会适得其反。\n1. 平复自己的情绪：抑制攻击冲动（最难也最重要，只需几秒）\n2. 平复他人的情绪：对方炸毛时\"几乎什么也不要做\"，只回\"同意/好的/是的\"\n3. 理解他人，而非让他人被理解：问\"你为什么不同意？\"，倾听找共识\n4. 复述对方的话：\"我说得对吗？\"——让对方知道被理解，他才会闭嘴听你说\n5. 用并列词汇提自己的观点：\"就我而言/与此同时\"，不说\"没错，但是……\"\n6. 提出双赢方案：找不到就问对方；再不行就折中；连折中没有，至少留住关系\n\n**换句话说**：前两步管情绪（自己的和对方的），中间两步管理解（先听懂、再证明你听懂了），最后两步管解决（并肩提观点、一起找方案）。顺序不能乱——90% 的冲突升级，都死在前两步。\n\n## 原文精华摘录\n\n**摘录 1**（序言）：\n> 在人类的认知天性中，从'我'到'你'，间隔着三重大山：偏见、情绪和行为。\n\n*点评：全书的理论地基，一句话。冲突的本质不是利益之争，而是三重认知屏障。*\n\n**摘录 2**（序言）：\n> 相比大家所熟知的'非暴力沟通'，本书更进一层，提出'自他交换'的概念。'自他交换'不仅是一种沟通方法，更是一种高维度的内在视角。\n\n*点评：帮你快速定位本书在沟通书谱系里的坐标——它是《非暴力沟通》的进阶版，主打视角切换而非话术。*\n\n**摘录 3**（第一关·方法一，全书最核心的一句）：\n> 情绪并不取决于您正在经历什么，而取决于您觉得自己经历了什么。\n\n*点评：情绪控制的总开关。让你生气的从来不是事件本身，而是你对事件的解读——这句话背后有一整个认知心理学的传统。*\n\n**摘录 4**（第一关·方法一，智者论情绪）：\n> 就像您可以用锤子钉钉子，也可以用它锤别人的脑袋。锤子还是那个锤子，用法却不同了。\n\n*点评：妙在反常识——情绪没有好坏，恐惧和愤怒是警示你的能量（故事里正是恐慌救了奥姆的命），要\"先听听再判断\"，而不是消除它。*\n\n**摘录 5**（第一关·方法一，引向冲突的四个误判）：\n> 当别人不同意我们的看法时，我们就会认为他想跟我们对着干……但其实（他是为自己考虑）。当有人威胁我们时，我们会认为他想让我们害怕，但其实，（是威胁者自己在害怕）。如果别人批评或者侮辱我们，我们会觉得他打算伤害我们……（其实他自己正在痛苦当中）。当别人表现出轻蔑时，我们总认为这代表他看不起我们……（其实他真正看不起的是自己）。\n\n*点评：方法一\"纠误判\"的具体清单，可直接对着用——下次被激怒时，逐条检查自己犯了哪个。*\n\n**摘录 6**（第一关·方法一，奥姆转述奶奶的话）：\n> 世上并没有坏人，只有受苦的人罢了。\n\n*点评：全书最柔软的一句，也是\"自他交换\"的民间版表达。攻击性强的人，多半自己正在痛。*\n\n**摘录 7**（后记·记忆锦囊，第 2 步——全书最反直觉的招）：\n> 尤其不要和对方说'你冷静点儿！'或者'你生气是没有用的！'……你可以用'同意''好的''是的''没错'等来回复对方……对方的情绪起初会有些波动，但随后便会逐渐稳定，直到最后慢慢平复。\n\n*点评：与直觉完全相反——对方发火时，一句\"你冷静点\"是火上浇油，而\"你说得对\"反而能让对方几秒内熄火。这是全书实操价值最高的一招。*\n\n**摘录 8**（后记·记忆锦囊，第 4 步复述）：\n> 之后问对方'我说得对吗？'。这样你会收获意想不到的神奇效果——对方会眉头上扬，露出满意的笑容，大赞一声'对啊！'。而后他便会闭上嘴，听你说话。\n\n*点评：复述的双重作用写得极诚实——既检验你是否真懂，又给足对方\"被理解\"的体验。人只有感到被理解后，才愿意听你说。*\n\n## 思考与辨析\n\n- **成立之处**：6 步法顺序设计有坚实的心理学逻辑——情绪不解决，讲道理无效；不理解对方，方案谈不拢。第 2 步的\"同意\"策略与认知失调理论暗合：对方攻击得不到对抗性回应，情绪自然回落。\n- **存疑之处**：① \"同意/好的\"在权力严重不对等或对方恶意利用时，可能被解读为软弱退让，反而助长侵犯； ② 长期关系中若总是一方在\"自他交换\"，会造成单向透支——书里没细讲\"对方永远不肯翻山过来怎么办\"（此点基于细读范围的判断，后续章节可能有涉及）； ③ \"纠误判\"在盛怒当下最难执行——恰好最需要它的时刻，最用不出来。\n- **怎么落地**：不必七关全学。先只练两招——第 2 步的\"好的/同意\"（成本最低、见效最快）和摘录 5 的四误判清单（被激怒时逐条自查）。这两招练成习惯后，再回头看后面的关。\n\n## 适合谁读 / 不适合谁\n\n- **适合**：经常陷于人际冲突（职场、家庭、客户）的人；读过《非暴力沟通》想进阶的人；喜欢寓言体、读不进理论书的人。\n- **不适合**：想要学术论证与实证数据的人（本书是经验方法，不提供研究引用）；期待\"话术模板库\"的人（它给的是内在视角，不是台词）。\n\n## 读完能带走什么\n\n一套 6 步冲突化解流程 + 一个情绪自查清单 + 一句可贴在工位的反直觉口诀：对方炸毛时，别说\"你冷静点\"，说\"你说得对\"。 至少能改变一个行为：下次冲突升级前，先走第 1、2 步，再开口讲道理。\n\n## 避坑\n\n- 别把\"自他交换\"理解成无原则退让——书的前提是对方也在这段关系里，恶意博弈场景需另行判断。\n- 6 步法看着简单，第 1 步（平复自己）才是真功夫，跳过它直接背话术会显得虚伪，效果归零。\n- 本书是寓言体，情节是方法的外壳；只看故事不读\"记忆锦囊\"，等于白读。\n"}};</script>
+<script>window.__SY_STATIC__={"generatedAt":1793610386392,"list":[{"id":"dg_6","bookId":"bk_1","version":6,"engine":"import","publishedAt":1793603902851,"title":"我就是你啊：走进他人内心的7项修炼","totalChars":102933,"chaptersCount":58,"oneLiner":"一本用\"蓝王国/红王国\"寓言讲沟通的方法论书，约 10 万字。故事好读，方法硬核——读完这篇导读约需 8 分钟，能带走一整套可上手的冲突化解术。","tag":"精华导读","digestChars":3085}],"details":{"dg_6":{"digest":{"schemaVersion":2,"tag":"精华导读","scope":"本导读的核心知识与原文摘录，仅基于实际细读的序言、第一关三种控情绪法、后记\"记忆锦囊\"（约 2 万字）；第二~七关仅据目录概述，未引原文。","oneLiner":"一本用\"蓝王国/红王国\"寓言讲沟通的方法论书，约 10 万字。故事好读，方法硬核——读完这篇导读约需 8 分钟，能带走一整套可上手的冲突化解术。","skeleton":["蓝红两国因一条新航线爆发冲突，蓝国王子奥姆奉命化解危机，却屡战屡败。","智者指点他踏上修行之路：七关修炼，每关学会一种\"走进他人内心\"的能力。","全书方法最后浓缩在后记\"记忆锦囊\"里——一套化解纷争的 6 步法（见下文核心知识）。","第一关是全部的根基：控制自己的情绪。学不会这关，后面六关全部免谈。"],"core":{"items":[{"lead":"① 三重山模型","body":"人与人的冲突，源于从\"我\"到\"你\"之间隔着三重大山——偏见、情绪、行为。想走进对方内心，得逐山翻越：先放下\"他就是针对我\"的偏见，再平息双方情绪，最后才谈得上改变行为互动。"},{"lead":"② 自他交换","body":"本书相比\"非暴力沟通\"更进一层的主张——不仅是一种沟通话术，更是一种内在视角：像看待自己一样看待对方，从超越偏见和情绪的高度，洞察对方行为背后的真实需求。"},{"lead":"③ 化解纷争 6 步法","body":"前提：全程避免解释、威胁、人身攻击——\"武力对抗\"只会适得其反。\n1. 平复自己的情绪：抑制攻击冲动（最难也最重要，只需几秒）\n2. 平复他人的情绪：对方炸毛时\"几乎什么也不要做\"，只回\"同意/好的/是的\"\n3. 理解他人，而非让他人被理解：问\"你为什么不同意？\"，倾听找共识\n4. 复述对方的话：\"我说得对吗？\"——让对方知道被理解，他才会闭嘴听你说\n5. 用并列词汇提自己的观点：\"就我而言/与此同时\"，不说\"没错，但是……\"\n6. 提出双赢方案：找不到就问对方；再不行就折中；连折中没有，至少留住关系"}],"tlDr":"前两步管情绪（自己的和对方的），中间两步管理解（先听懂、再证明你听懂了），最后两步管解决（并肩提观点、一起找方案）。顺序不能乱——90% 的冲突升级，都死在前两步。"},"quotes":[{"text":"在人类的认知天性中，从'我'到'你'，间隔着三重大山：偏见、情绪和行为。","src":"序言","note":"全书的理论地基，一句话。冲突的本质不是利益之争，而是三重认知屏障。"},{"text":"相比大家所熟知的'非暴力沟通'，本书更进一层，提出'自他交换'的概念。'自他交换'不仅是一种沟通方法，更是一种高维度的内在视角。","src":"序言","note":"帮你快速定位本书在沟通书谱系里的坐标——它是《非暴力沟通》的进阶版，主打视角切换而非话术。"},{"text":"情绪并不取决于您正在经历什么，而取决于您觉得自己经历了什么。","src":"第一关·方法一，全书最核心的一句","note":"情绪控制的总开关。让你生气的从来不是事件本身，而是你对事件的解读——这句话背后有一整个认知心理学的传统。"},{"text":"就像您可以用锤子钉钉子，也可以用它锤别人的脑袋。锤子还是那个锤子，用法却不同了。","src":"第一关·方法一，智者论情绪","note":"妙在反常识——情绪没有好坏，恐惧和愤怒是警示你的能量（故事里正是恐慌救了奥姆的命），要\"先听听再判断\"，而不是消除它。"},{"text":"当别人不同意我们的看法时，我们就会认为他想跟我们对着干……但其实（他是为自己考虑）。当有人威胁我们时，我们会认为他想让我们害怕，但其实，（是威胁者自己在害怕）。如果别人批评或者侮辱我们，我们会觉得他打算伤害我们……（其实他自己正在痛苦当中）。当别人表现出轻蔑时，我们总认为这代表他看不起我们……（其实他真正看不起的是自己）。","src":"第一关·方法一，引向冲突的四个误判","note":"方法一\"纠误判\"的具体清单，可直接对着用——下次被激怒时，逐条检查自己犯了哪个。"},{"text":"世上并没有坏人，只有受苦的人罢了。","src":"第一关·方法一，奥姆转述奶奶的话","note":"全书最柔软的一句，也是\"自他交换\"的民间版表达。攻击性强的人，多半自己正在痛。"},{"text":"尤其不要和对方说'你冷静点儿！'或者'你生气是没有用的！'……你可以用'同意''好的''是的''没错'等来回复对方……对方的情绪起初会有些波动，但随后便会逐渐稳定，直到最后慢慢平复。","src":"后记·记忆锦囊，第 2 步——全书最反直觉的招","note":"与直觉完全相反——对方发火时，一句\"你冷静点\"是火上浇油，而\"你说得对\"反而能让对方几秒内熄火。这是全书实操价值最高的一招。"},{"text":"之后问对方'我说得对吗？'。这样你会收获意想不到的神奇效果——对方会眉头上扬，露出满意的笑容，大赞一声'对啊！'。而后他便会闭上嘴，听你说话。","src":"后记·记忆锦囊，第 4 步复述","note":"复述的双重作用写得极诚实——既检验你是否真懂，又给足对方\"被理解\"的体验。人只有感到被理解后，才愿意听你说。"}],"thoughts":{"holds":"6 步法顺序设计有坚实的心理学逻辑——情绪不解决，讲道理无效；不理解对方，方案谈不拢。第 2 步的\"同意\"策略与认知失调理论暗合：对方攻击得不到对抗性回应，情绪自然回落。","doubts":["① \"同意/好的\"在权力严重不对等或对方恶意利用时，可能被解读为软弱退让，反而助长侵犯；","② 长期关系中若总是一方在\"自他交换\"，会造成单向透支——书里没细讲\"对方永远不肯翻山过来怎么办\"（此点基于细读范围的判断，后续章节可能有涉及）；","③ \"纠误判\"在盛怒当下最难执行——恰好最需要它的时刻，最用不出来。"],"howto":"不必七关全学。先只练两招——第 2 步的\"好的/同意\"（成本最低、见效最快）和摘录 5 的四误判清单（被激怒时逐条自查）。这两招练成习惯后，再回头看后面的关。","notes":[]},"fit":["经常陷于人际冲突（职场、家庭、客户）的人；读过《非暴力沟通》想进阶的人；喜欢寓言体、读不进理论书的人。"],"unfit":["想要学术论证与实证数据的人（本书是经验方法，不提供研究引用）；期待\"话术模板库\"的人（它给的是内在视角，不是台词）。"],"takeaway":"一套 6 步冲突化解流程 + 一个情绪自查清单 + 一句可贴在工位的反直觉口诀：对方炸毛时，别说\"你冷静点\"，说\"你说得对\"。 至少能改变一个行为：下次冲突升级前，先走第 1、2 步，再开口讲道理。","pitfalls":["别把\"自他交换\"理解成无原则退让——书的前提是对方也在这段关系里，恶意博弈场景需另行判断。","6 步法看着简单，第 1 步（平复自己）才是真功夫，跳过它直接背话术会显得虚伪，效果归零。","本书是寓言体，情节是方法的外壳；只看故事不读\"记忆锦囊\"，等于白读。"]},"book":{"title":"我就是你啊：走进他人内心的7项修炼","totalChars":102933,"chaptersCount":58,"sourceFile":"WoJiuShiNiA_ZouJinTaRen.epub"},"meta":{"version":6,"engine":"import","publishedAt":1793603902851}}},"markdown":{"dg_6":"# 《我就是你啊：走进他人内心的7项修炼》精华导读\n\n> **范围声明**：本导读的核心知识与原文摘录，仅基于实际细读的序言、第一关三种控情绪法、后记\"记忆锦囊\"（约 2 万字）；第二~七关仅据目录概述，未引原文。\n\n---\n\n## 一句话定位\n\n一本用\"蓝王国/红王国\"寓言讲沟通的方法论书，约 10 万字。故事好读，方法硬核——读完这篇导读约需 8 分钟，能带走一整套可上手的冲突化解术。\n\n## 这本书讲什么（结构骨架）\n\n1. 蓝红两国因一条新航线爆发冲突，蓝国王子奥姆奉命化解危机，却屡战屡败。\n2. 智者指点他踏上修行之路：七关修炼，每关学会一种\"走进他人内心\"的能力。\n3. 全书方法最后浓缩在后记\"记忆锦囊\"里——一套化解纷争的 6 步法（见下文核心知识）。\n4. 第一关是全部的根基：控制自己的情绪。学不会这关，后面六关全部免谈。\n\n## 核心知识（作者的精华）\n\n**① 三重山模型**：人与人的冲突，源于从\"我\"到\"你\"之间隔着三重大山——偏见、情绪、行为。想走进对方内心，得逐山翻越：先放下\"他就是针对我\"的偏见，再平息双方情绪，最后才谈得上改变行为互动。\n\n**② 自他交换**：本书相比\"非暴力沟通\"更进一层的主张——不仅是一种沟通话术，更是一种内在视角：像看待自己一样看待对方，从超越偏见和情绪的高度，洞察对方行为背后的真实需求。\n\n**③ 化解纷争 6 步法**：前提：全程避免解释、威胁、人身攻击——\"武力对抗\"只会适得其反。\n1. 平复自己的情绪：抑制攻击冲动（最难也最重要，只需几秒）\n2. 平复他人的情绪：对方炸毛时\"几乎什么也不要做\"，只回\"同意/好的/是的\"\n3. 理解他人，而非让他人被理解：问\"你为什么不同意？\"，倾听找共识\n4. 复述对方的话：\"我说得对吗？\"——让对方知道被理解，他才会闭嘴听你说\n5. 用并列词汇提自己的观点：\"就我而言/与此同时\"，不说\"没错，但是……\"\n6. 提出双赢方案：找不到就问对方；再不行就折中；连折中没有，至少留住关系\n\n**换句话说**：前两步管情绪（自己的和对方的），中间两步管理解（先听懂、再证明你听懂了），最后两步管解决（并肩提观点、一起找方案）。顺序不能乱——90% 的冲突升级，都死在前两步。\n\n## 原文精华摘录\n\n**摘录 1**（序言）：\n> 在人类的认知天性中，从'我'到'你'，间隔着三重大山：偏见、情绪和行为。\n\n*点评：全书的理论地基，一句话。冲突的本质不是利益之争，而是三重认知屏障。*\n\n**摘录 2**（序言）：\n> 相比大家所熟知的'非暴力沟通'，本书更进一层，提出'自他交换'的概念。'自他交换'不仅是一种沟通方法，更是一种高维度的内在视角。\n\n*点评：帮你快速定位本书在沟通书谱系里的坐标——它是《非暴力沟通》的进阶版，主打视角切换而非话术。*\n\n**摘录 3**（第一关·方法一，全书最核心的一句）：\n> 情绪并不取决于您正在经历什么，而取决于您觉得自己经历了什么。\n\n*点评：情绪控制的总开关。让你生气的从来不是事件本身，而是你对事件的解读——这句话背后有一整个认知心理学的传统。*\n\n**摘录 4**（第一关·方法一，智者论情绪）：\n> 就像您可以用锤子钉钉子，也可以用它锤别人的脑袋。锤子还是那个锤子，用法却不同了。\n\n*点评：妙在反常识——情绪没有好坏，恐惧和愤怒是警示你的能量（故事里正是恐慌救了奥姆的命），要\"先听听再判断\"，而不是消除它。*\n\n**摘录 5**（第一关·方法一，引向冲突的四个误判）：\n> 当别人不同意我们的看法时，我们就会认为他想跟我们对着干……但其实（他是为自己考虑）。当有人威胁我们时，我们会认为他想让我们害怕，但其实，（是威胁者自己在害怕）。如果别人批评或者侮辱我们，我们会觉得他打算伤害我们……（其实他自己正在痛苦当中）。当别人表现出轻蔑时，我们总认为这代表他看不起我们……（其实他真正看不起的是自己）。\n\n*点评：方法一\"纠误判\"的具体清单，可直接对着用——下次被激怒时，逐条检查自己犯了哪个。*\n\n**摘录 6**（第一关·方法一，奥姆转述奶奶的话）：\n> 世上并没有坏人，只有受苦的人罢了。\n\n*点评：全书最柔软的一句，也是\"自他交换\"的民间版表达。攻击性强的人，多半自己正在痛。*\n\n**摘录 7**（后记·记忆锦囊，第 2 步——全书最反直觉的招）：\n> 尤其不要和对方说'你冷静点儿！'或者'你生气是没有用的！'……你可以用'同意''好的''是的''没错'等来回复对方……对方的情绪起初会有些波动，但随后便会逐渐稳定，直到最后慢慢平复。\n\n*点评：与直觉完全相反——对方发火时，一句\"你冷静点\"是火上浇油，而\"你说得对\"反而能让对方几秒内熄火。这是全书实操价值最高的一招。*\n\n**摘录 8**（后记·记忆锦囊，第 4 步复述）：\n> 之后问对方'我说得对吗？'。这样你会收获意想不到的神奇效果——对方会眉头上扬，露出满意的笑容，大赞一声'对啊！'。而后他便会闭上嘴，听你说话。\n\n*点评：复述的双重作用写得极诚实——既检验你是否真懂，又给足对方\"被理解\"的体验。人只有感到被理解后，才愿意听你说。*\n\n## 思考与辨析\n\n- **成立之处**：6 步法顺序设计有坚实的心理学逻辑——情绪不解决，讲道理无效；不理解对方，方案谈不拢。第 2 步的\"同意\"策略与认知失调理论暗合：对方攻击得不到对抗性回应，情绪自然回落。\n- **存疑之处**：① \"同意/好的\"在权力严重不对等或对方恶意利用时，可能被解读为软弱退让，反而助长侵犯； ② 长期关系中若总是一方在\"自他交换\"，会造成单向透支——书里没细讲\"对方永远不肯翻山过来怎么办\"（此点基于细读范围的判断，后续章节可能有涉及）； ③ \"纠误判\"在盛怒当下最难执行——恰好最需要它的时刻，最用不出来。\n- **怎么落地**：不必七关全学。先只练两招——第 2 步的\"好的/同意\"（成本最低、见效最快）和摘录 5 的四误判清单（被激怒时逐条自查）。这两招练成习惯后，再回头看后面的关。\n\n## 适合谁读 / 不适合谁\n\n- **适合**：经常陷于人际冲突（职场、家庭、客户）的人；读过《非暴力沟通》想进阶的人；喜欢寓言体、读不进理论书的人。\n- **不适合**：想要学术论证与实证数据的人（本书是经验方法，不提供研究引用）；期待\"话术模板库\"的人（它给的是内在视角，不是台词）。\n\n## 读完能带走什么\n\n一套 6 步冲突化解流程 + 一个情绪自查清单 + 一句可贴在工位的反直觉口诀：对方炸毛时，别说\"你冷静点\"，说\"你说得对\"。 至少能改变一个行为：下次冲突升级前，先走第 1、2 步，再开口讲道理。\n\n## 避坑\n\n- 别把\"自他交换\"理解成无原则退让——书的前提是对方也在这段关系里，恶意博弈场景需另行判断。\n- 6 步法看着简单，第 1 步（平复自己）才是真功夫，跳过它直接背话术会显得虚伪，效果归零。\n- 本书是寓言体，情节是方法的外壳；只看故事不读\"记忆锦囊\"，等于白读。\n"}};</script>
 <script>
 /* 静态站垫片：把阅读页的 /api/* 请求接到内嵌数据上，页面代码零改动 */
 (function () {
@@ -218,169 +350,329 @@ header{
 <script>
 const $=s=>document.querySelector(s);
 const app=$('#app');
-let current=null; // {digest, book, meta}
-let fs=+(localStorage.getItem('sy-fs')||16);
+const SPINES=['#A6402C','#2C6650','#3B5A82','#8A5A2B','#5E4B7A','#2F6B6B','#7A6A3B','#8A3F55'];
+
+let current=null;          // {digest,book,meta,id}
+let sections=[];           // [{el}]
+let secNo=0;               // 章节序号计数器
+let tocBuilt=false;
 
 function esc(s){const d=document.createElement('div');d.textContent=s??'';return d.innerHTML}
-function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
-function setFs(v){fs=Math.min(24,Math.max(13,v));document.documentElement.style.setProperty('--fs',fs+'px');$('#fs-val').textContent=fs+'px';localStorage.setItem('sy-fs',fs)}
-$('#btn-fs').onclick=()=>setFs(fs-1);$('#btn-fs2').onclick=()=>setFs(fs+1);
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2000)}
+function spineOf(t){let h=0;for(const c of (t||''))h=(h*31+c.charCodeAt(0))>>>0;return SPINES[h%SPINES.length]}
+const wn=n=>n>=10000?(n/10000).toFixed(1)+' 万':String(n);
+const minutesOf=chars=>Math.max(3,Math.round((chars||0)/400));
 
-/* 主题 */
-const theme=localStorage.getItem('sy-theme')||'light';
-document.documentElement.setAttribute('data-theme',theme);
-$('#btn-theme').textContent=theme==='dark'?'☀️':'🌙';
-$('#btn-theme').onclick=()=>{
-  const n=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
-  document.documentElement.setAttribute('data-theme',n);localStorage.setItem('sy-theme',n);
-  $('#btn-theme').textContent=n==='dark'?'☀️':'🌙';
+/* ---------------- 偏好（字号/行距/主题） ---------------- */
+const prefs={
+  fs:+(localStorage.getItem('sy-fs')||16.5),
+  lh:+(localStorage.getItem('sy-lh')||1.92),
+  theme:localStorage.getItem('sy-theme')||'light',
 };
+function applyPrefs(){
+  document.documentElement.style.setProperty('--fs',prefs.fs+'px');
+  document.documentElement.style.setProperty('--lh',prefs.lh);
+  document.documentElement.setAttribute('data-theme',prefs.theme);
+  const m={light:'#FBFAF7',sepia:'#F6EFE1',dark:'#131311'}[prefs.theme];
+  document.querySelector('meta[name=theme-color]').setAttribute('content',m);
+  $('#fsVal').textContent=prefs.fs;
+  $('#segLh').querySelectorAll('b').forEach(b=>b.classList.toggle('on',+b.dataset.lh===prefs.lh));
+  $('#segTheme').querySelectorAll('b').forEach(b=>b.classList.toggle('on',b.dataset.theme===prefs.theme));
+}
+function savePrefs(){localStorage.setItem('sy-fs',prefs.fs);localStorage.setItem('sy-lh',prefs.lh);
+  localStorage.setItem('sy-theme',prefs.theme);applyPrefs()}
+$('#fsUp').onclick=()=>{prefs.fs=Math.min(22,prefs.fs+1);savePrefs()};
+$('#fsDown').onclick=()=>{prefs.fs=Math.max(14,prefs.fs-1);savePrefs()};
+$('#segLh').onclick=e=>{const b=e.target.closest('b');if(!b)return;prefs.lh=+b.dataset.lh;savePrefs()};
+$('#segTheme').onclick=e=>{const b=e.target.closest('b');if(!b)return;prefs.theme=b.dataset.theme;savePrefs()};
 
-/* 路由：#/ 书架  #/d/:id 阅读页 */
+/* ---------------- 抽屉 ---------------- */
+function openSheet(which){
+  closeSheets();
+  $('#scrim').classList.add('on');
+  $(which).classList.add('on');
+  document.body.style.overflow='hidden';
+}
+function closeSheets(){
+  $('#scrim').classList.remove('on');
+  $('#sheetSet').classList.remove('on');
+  $('#sheetToc').classList.remove('on');
+  document.body.style.overflow='';
+}
+$('#scrim').onclick=closeSheets;
+$('#btn-set').onclick=()=>openSheet('#sheetSet');
+$('#btn-toc').onclick=()=>{buildToc();openSheet('#sheetToc')};
+addEventListener('keydown',e=>{if(e.key==='Escape')closeSheets()});
+
+/* ---------------- 路由 ---------------- */
 function route(){
   const h=location.hash||'#/';
   const m=h.match(/^#\/d\/(.+)$/);
+  closeSheets();
   if(m) showDigest(m[1]); else showShelf();
 }
 addEventListener('hashchange',route);
 
+/* ---------------- 书架 ---------------- */
 async function showShelf(){
-  $('#toolbar').style.display='none';
-  app.innerHTML='<div class="loading">书架加载中…</div>';
+  document.title='书语 · 精华导读';
+  $('#btn-toc').style.display='none';
+  $('#fab').style.display='none';
+  $('#chapName').innerHTML='<span class="brandmark">书语</span>';
+  window.scrollTo(0,0);
+  app.innerHTML=`<div class="shelf"><div class="skel-card">
+      <div class="skel-line w60"></div><div class="skel-line w90"></div><div class="skel-line w40"></div>
+    </div><div class="skel-card"><div class="skel-line w40"></div><div class="skel-line w90"></div></div></div>`;
   try{
     const r=await fetch('/api/digests');
     const {digests}=await r.json();
     if(!digests.length){
-      app.innerHTML=`<div class="shelf-empty"><div class="big">📚</div>书架还空着<br><span style="font-size:12px">管理员在 /admin 上传书籍并发布导读后，会出现在这里</span></div>`;
+      app.innerHTML=`<div class="shelf"><div class="state">
+        <div class="big">书架还空着</div>
+        <div class="sm">管理员在 /admin 上传书籍并发布导读后<br>会出现在这里</div>
+      </div></div>`;
       return;
     }
-    app.innerHTML=`<div class="shelf-title">书架 · ${digests.length} 篇精华导读</div>`+
-      digests.map(d=>`
-      <div class="book-card" onclick="location.hash='#/d/${d.id}'">
-        <div class="cover">${esc((d.title||'书').slice(0,8))}</div>
-        <div class="info">
-          <div class="bt">《${esc(d.title)}》</div>
-          <div class="bd">${esc(d.oneLiner)}</div>
-          <div class="meta">
-            <span class="badge">${esc(d.tag||'精华导读')}</span>
-            <span>${d.totalChars>=10000?(d.totalChars/10000).toFixed(1)+'万字':d.totalChars+'字'}</span>
-            <span>${d.engine==='ai'?'AI 引擎':'本地引擎'}</span>
+    // 继续阅读
+    let cont='';
+    const lastId=localStorage.getItem('sy-last');
+    const last=digests.find(d=>d.id===lastId);
+    if(last){
+      const p=Math.round((+(localStorage.getItem('sy-prog-'+last.id)||0))*100);
+      if(p>1) cont=`<div class="continue" onclick="location.hash='#/d/${last.id}'">
+        <div class="ring" style="--p:${p}%"><span>${p}%</span></div>
+        <div class="tx"><b>《${esc(last.title)}》精华导读</b><span>继续上次阅读 · 还剩约 ${Math.max(1,minutesOf(last.digestChars)-Math.round(minutesOf(last.digestChars)*p/100))} 分钟</span></div>
+        <div class="arw">→</div>
+      </div>`;
+    }
+    app.innerHTML=`<div class="shelf">
+      <div class="masthead">
+        <div><div class="brand">书语</div>
+          <div class="tagline">精华导读 · 读完一本约 ${minutesOf(digests[0].digestChars)} 分钟</div></div>
+        <div class="count">${digests.length} 篇<br>已发布</div>
+      </div>
+      ${cont}
+      <div class="shelf-sec">全部导读</div>
+      ${digests.map(d=>`
+        <div class="book" onclick="location.hash='#/d/${d.id}'">
+          <div class="spine" style="background:${spineOf(d.title)}"></div>
+          <div class="body">
+            <h4>${esc(d.title)}</h4>
+            <p>${esc(d.oneLiner||'暂无一句话定位')}</p>
+            <div class="meta">
+              <span class="tag">${esc(d.tag||'精华导读')}</span><i></i>
+              <span>${wn(d.totalChars||0)} 字</span><i></i>
+              <span>${minutesOf(d.digestChars)} 分钟</span>
+            </div>
           </div>
-        </div>
-      </div>`).join('');
+        </div>`).join('')}
+    </div>`;
   }catch(e){
-    app.innerHTML='<div class="shelf-empty">书架加载失败，请稍后重试</div>';
+    app.innerHTML=`<div class="shelf"><div class="state">
+      <div class="big">书架加载失败</div><div class="sm">请检查网络后重试</div></div></div>`;
   }
 }
 
+/* ---------------- 阅读页 ---------------- */
+function sec(title,html,id){
+  if(!html) return '';
+  secNo+=1;
+  return `<section class="sec" data-sec="${id}">
+    <div class="sec-h"><div class="no">${String(secNo).padStart(2,'0')}</div><h2>${title}</h2></div>
+    ${html}</section>`;
+}
+
 async function showDigest(id){
-  app.innerHTML='<div class="loading">导读加载中…</div>';
+  $('#btn-toc').style.display='';
+  $('#fab').style.display='';
+  $('#chapName').textContent='加载中';
+  sections=[]; secNo=0;
+  app.innerHTML=`<div class="reader"><div class="r-head">
+    <div class="skel-line w40"></div><div class="skel-line w90"></div><div class="skel-line w60"></div>
+  </div></div>`;
   try{
     const r=await fetch('/api/digests/'+id);
-    if(!r.ok){app.innerHTML='<div class="shelf-empty">导读不存在或未发布 <a class="back-link" href="#/">← 返回书架</a></div>';return}
+    if(!r.ok){
+      app.innerHTML=`<div class="state"><div class="big">导读不存在或未发布</div>
+        <div class="sm"><a href="#/" style="color:var(--brand)">← 返回书架</a></div></div>`;
+      return;
+    }
     const {digest:d,book,meta}=await r.json();
     current={digest:d,book,meta,id};
-    $('#toolbar').style.display='block';
-    const wn=n=>n>=10000?(n/10000).toFixed(1)+' 万':String(n);
-    const engName={ai:'AI 引擎',local:'本地引擎',import:'导入'}[meta.engine]||meta.engine;
+    document.title=`${book.title} · 书语精华导读`;
+    localStorage.setItem('sy-last',id);
 
     const ck=(d.core&&d.core.items)||[];
     const tlDr=(d.core&&d.core.tlDr)||'';
     const th=d.thoughts||{};
     const doubts=th.doubts||[];
     const notes=th.notes||[];
-    const hasThink=!!(th.holds||doubts.length||th.howto||notes.length);
-    const todo='<div class="todo-note"><b>本段尚未生成。</b>当前是未接入模型的框架稿——在管理台配置模型，或导入 AI 稿后即可补全。</div>';
+    const todo=`<div class="todo-note"><b>本段尚未生成。</b>当前是未接入模型的框架稿——在管理台配置模型，或导入 AI 稿后即可补全。</div>`;
 
-    app.innerHTML=`
-    <a class="back-link" href="#/">← 返回书架</a>
+    let body='';
 
-    <article class="reader-card book-head">
-      <span class="tag">${esc(d.tag||'精华导读')}</span>
-      <h2>《${esc(book.title)}》精华导读</h2>
-      <p class="meta">${wn(book.totalChars||0)} 字 · ${book.chaptersCount} 节 · ${engName} · v${meta.version}</p>
-      ${d.scope?`<div class="scope-note" style="text-align:left;margin-top:18px"><b>范围声明</b>　${esc(d.scope)}</div>`:''}
-    </article>
+    // 01 一句话定位
+    if(d.oneLiner) body+=sec('一句话定位',`<div class="blk"><p>${esc(d.oneLiner)}</p></div>`,'定位');
 
-    ${d.oneLiner?`<article class="reader-card">
-      <div class="sec-title">一句话定位</div><p>${esc(d.oneLiner)}</p>
-    </article>`:''}
+    // 02 这本书讲什么
+    if((d.skeleton||[]).length){
+      body+=sec('这本书讲什么',
+        `<div class="blk">${d.skeleton.map((s,i)=>`
+          <div class="insight"><div class="dot">${String(i+1).padStart(2,'0')}</div>
+          <div><div class="txt">${esc(s)}</div></div></div>`).join('')}</div>`,'讲什么');
+    }
 
-    ${(d.skeleton||[]).length?`<article class="reader-card">
-      <div class="sec-title">这本书讲什么</div>
-      <ol class="skel">${d.skeleton.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>
-    </article>`:''}
+    // 03 核心知识
+    body+=sec('核心知识',
+      `<div class="blk">
+        ${ck.length?ck.map((it,i)=>`
+          <div class="insight"><div class="dot">${String(i+1).padStart(2,'0')}</div>
+          <div>${it.lead?`<div class="lead">${esc(it.lead)}</div>`:''}
+          ${it.body?`<div class="txt">${esc(it.body)}</div>`:''}</div></div>`).join(''):todo}
+        ${tlDr?`<div class="tldr"><b>换句话说</b>${esc(tlDr)}</div>`:''}
+      </div>`,'核心知识');
 
-    <article class="reader-card">
-      <div class="sec-title">核心知识</div>
-      ${ck.length?ck.map(it=>`
-        <div class="ck">
-          ${it.lead?`<div class="ck-lead">${esc(it.lead)}</div>`:''}
-          ${it.body?`<div class="ck-body">${esc(it.body)}</div>`:''}
-        </div>`).join(''):todo}
-      ${tlDr?`<div class="tldr"><b>换句话说</b>　${esc(tlDr)}</div>`:''}
-    </article>
+    // 04 原文摘录
+    if((d.quotes||[]).length){
+      body+=sec('原文摘录',
+        d.quotes.map(q=>`
+          <blockquote class="quote">
+            <span class="mark">“</span>
+            <div class="qt">${esc(q.text)}</div>
+            <div class="qs"><span class="rule"></span>${esc(q.src||'原文')}</div>
+            ${q.note?`<div class="qn">${esc(q.note)}</div>`:''}
+          </blockquote>`).join(''),'摘录');
+    }
 
-    ${(d.quotes||[]).length?`<article class="reader-card">
-      <div class="sec-title">原文精华摘录</div>
-      ${d.quotes.map((q,i)=>`
-        <blockquote class="quote">
-          <div class="q-no">摘录 ${i+1} · ${esc(q.src||'原文')}</div>
-          <p class="q-text">「${esc(q.text)}」</p>
-          ${q.note?`<p class="q-note">点评：${esc(q.note)}</p>`:''}
-        </blockquote>`).join('')}
-    </article>`:''}
+    // 05 思考与辨析
+    if(th.holds||doubts.length||th.howto||notes.length){
+      body+=sec('思考与辨析',
+        `<div class="blk"><div class="verdict">
+          ${th.holds?`<div class="vd ok"><div class="lab"><i></i>成立</div><p>${esc(th.holds)}</p></div>`:''}
+          ${doubts.length?`<div class="vd doubt"><div class="lab"><i></i>存疑</div>
+            <ul>${doubts.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
+          ${th.howto?`<div class="vd how"><div class="lab"><i></i>怎么用</div><p>${esc(th.howto)}</p></div>`:''}
+          ${notes.length?`<div class="vd"><p>${notes.map(esc).join('<br>')}</p></div>`:''}
+        </div></div>`,'辨析');
+    }
 
-    <article class="reader-card">
-      <div class="sec-title">思考与辨析</div>
-      ${th.holds?`<div class="think-block"><div class="h">成立之处</div><p>${esc(th.holds)}</p></div>`:''}
-      ${doubts.length?`<div class="think-block doubt"><div class="h">存疑之处</div>
-        <ul class="think-list">${doubts.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
-      ${th.howto?`<div class="think-block"><div class="h">怎么落地</div><p>${esc(th.howto)}</p></div>`:''}
-      ${notes.length?`<div class="think-block">${notes.map(n=>`<p>${esc(n)}</p>`).join('')}</div>`:''}
-      ${!hasThink?todo:''}
-      ${((d.fit||[]).length||(d.unfit||[]).length)?`<div class="dual">
-        <div class="fit"><div class="h">✔ 适合谁读</div>${(d.fit||[]).map(x=>`<div>· ${esc(x)}</div>`).join('')||'—'}</div>
-        <div class="unfit"><div class="h">✘ 不适合谁</div>${(d.unfit||[]).map(x=>`<div>· ${esc(x)}</div>`).join('')||'—'}</div>
-      </div>`:''}
-    </article>
+    // 06 适合谁
+    if((d.fit||[]).length||(d.unfit||[]).length){
+      body+=sec('适合谁',
+        `<div class="blk"><div class="fitgrid">
+          <div class="fitcol yes"><div class="h">适合</div>
+            <ul>${(d.fit||[]).map(x=>`<li>${esc(x)}</li>`).join('')||'<li>—</li>'}</ul></div>
+          <div class="fitcol no"><div class="h">不适合</div>
+            <ul>${(d.unfit||[]).map(x=>`<li>${esc(x)}</li>`).join('')||'<li>—</li>'}</ul></div>
+        </div></div>`,'适合谁');
+    }
 
-    ${d.takeaway?`<article class="reader-card">
-      <div class="sec-title">读完能带走什么</div>
-      <div class="takeaway"><div class="h">TAKEAWAY</div><p>${esc(d.takeaway)}</p></div>
-    </article>`:''}
+    // 07 带走什么
+    if(d.takeaway){
+      body+=sec('带走什么',
+        `<div class="takeaway"><div class="h">TAKEAWAY</div><p>${esc(d.takeaway)}</p></div>`,'带走什么');
+    }
 
-    ${(d.pitfalls||[]).length?`<article class="reader-card">
-      <div class="sec-title">避坑</div>
-      <ul class="pitfall">${d.pitfalls.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>
-    </article>`:''}`;
+    // 08 避坑
+    if((d.pitfalls||[]).length){
+      body+=sec('避坑',
+        `<div class="blk"><ul class="pitfalls">${d.pitfalls.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>`,'避坑');
+    }
 
-    // 阅读位置记忆
+    app.innerHTML=`<article class="reader">
+      <div class="r-head">
+        <div class="kicker">${esc(d.tag||'精华导读')}</div>
+        <h1>${esc(book.title)}</h1>
+        <div class="sub"><span>${wn(book.totalChars||0)} 字</span><i></i>
+          <span>${book.chaptersCount||'—'} 节</span><i></i><span>读完约 ${minutesOf(JSON.stringify(d).length)} 分钟</span></div>
+        ${d.oneLiner?`<p class="oneliner">${esc(d.oneLiner)}</p>`:''}
+        ${d.scope?`<p class="scope"><b>范围声明</b>${esc(d.scope)}</p>`:''}
+      </div>
+      ${body}
+      <div class="r-end"><span>书语 · 精华导读 v${meta.version}</span><span id="pctEnd">0%</span></div>
+    </article>`;
+
+    sections=[...app.querySelectorAll('[data-sec]')];
+
+    // 阅读位置恢复
     const pos=+(localStorage.getItem('sy-pos-'+id)||0);
-    if(pos>200){setTimeout(()=>window.scrollTo(0,pos),50);toast('已恢复上次阅读位置')}
+    if(pos>200){requestAnimationFrame(()=>window.scrollTo(0,pos));toast('已恢复上次阅读位置')}
+    else window.scrollTo(0,0);
+    updateScroll(true);
   }catch(e){
-    app.innerHTML='<div class="shelf-empty">加载失败，请检查网络</div>';
+    app.innerHTML=`<div class="state"><div class="big">加载失败</div>
+      <div class="sm">请检查网络后重试</div></div>`;
   }
 }
 
-/* 进度 + 位置记忆 */
-addEventListener('scroll',()=>{
+/* ---------------- 滚动：进度 / 章节名 / 位置记忆 ---------------- */
+function updateScroll(force){
   const h=document.documentElement;
-  if(h.scrollHeight<=h.clientHeight)return;
-  const p=h.scrollTop/(h.scrollHeight-h.clientHeight);
+  const max=h.scrollHeight-h.clientHeight;
+  const p=max>0?Math.min(1,h.scrollTop/max):0;
   $('#pbar').style.width=(p*100).toFixed(1)+'%';
-  const m=location.hash.match(/^#\/d\/(.+)$/);
-  if(m)localStorage.setItem('sy-pos-'+m[1],window.scrollY);
+  const pe=$('#pctEnd'); if(pe) pe.textContent=Math.round(p*100)+'%';
+
+  if(!current || !sections.length) return;
+  const y=h.scrollTop+80;
+  let idx=0;
+  sections.forEach((s,i)=>{ if(s.offsetTop<=y) idx=i; });
+  const name=sections[idx].querySelector('h2').textContent;
+  $('#chapName').textContent=`${String(idx+1).padStart(2,'0')} · ${name}`;
+  $('#tocList').querySelectorAll('li').forEach((li,i)=>li.classList.toggle('on',i===idx));
+
+  if(!force){
+    localStorage.setItem('sy-pos-'+current.id,Math.round(h.scrollTop));
+    localStorage.setItem('sy-prog-'+current.id,p.toFixed(3));
+  }
+}
+let ticking=false;
+addEventListener('scroll',()=>{
+  if(ticking)return;
+  ticking=true;
+  requestAnimationFrame(()=>{updateScroll();ticking=false});
 },{passive:true});
 
+/* ---------------- 目录 ---------------- */
+function buildToc(){
+  if(!current) return;
+  const pct=Math.round((+(localStorage.getItem('sy-prog-'+current.id)||0))*100);
+  $('#tocHint').textContent=`共 ${sections.length} 段 · 已读 ${pct}%`;
+  $('#tocList').innerHTML=sections.map((s,i)=>`
+    <li data-i="${i}"><span class="n">${String(i+1).padStart(2,'0')}</span>
+    <span class="t">${esc(s.querySelector('h2').textContent)}</span>
+    <span class="pg">${i===sections.length-1?'结尾':''}</span></li>`).join('');
+  $('#tocList').querySelectorAll('li').forEach(li=>{
+    li.onclick=()=>{
+      const s=sections[+li.dataset.i];
+      closeSheets();
+      setTimeout(()=>window.scrollTo({top:s.offsetTop-56,behavior:'smooth'}),120);
+    };
+  });
+  updateScroll(true);   // 立即同步当前段高亮
+}
+
+/* ---------------- 顶部操作 ---------------- */
 $('#btn-back').onclick=()=>location.hash='#/';
-$('#btn-md').onclick=()=>{
-  if(!current)return;
+
+function doExport(btn){
+  if(!current){toast('请先打开一篇导读');return}
+  if(btn.dataset.mode==='copy'){
+    fetch('/api/digests/'+current.id+'/markdown').then(r=>r.text()).then(t=>{
+      navigator.clipboard?.writeText(t).then(()=>toast('Markdown 已复制'),()=>toast('复制失败，请用「导出文件」'));
+    });
+    return;
+  }
   location.href='/api/digests/'+current.id+'/markdown';
   toast('正在导出 Markdown');
-};
+}
+$('#btn-md').dataset.mode='copy';
+$('#btn-md').onclick=e=>doExport(e.currentTarget);
+$('#btn-dl').onclick=e=>doExport(e.currentTarget);
 
-setFs(fs);
+/* 初始化 */
+applyPrefs();
 route();
 </script>
 </body>
