@@ -1,4 +1,4 @@
-# 书语 · 在线阅读站
+# 简读 · 在线阅读站
 
 本仓库只放**构建产物**，是 [Shaksper/jianyue](https://github.com/Shaksper/jianyue) 的静态导出版本，供 GitHub Pages 托管。
 
